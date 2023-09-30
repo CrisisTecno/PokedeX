@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/models/pokemon.model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Pokedex',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -47,37 +49,48 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
-  void _incrementCounter() {
+  String? pokemon1;
+  void _changePokemon() {
     setState(() {
-
-      _counter++;
+        pokemon1="ditto";
     });
   }
+Pokemon? pokemon;
 
+Future<Pokemon?> getPokemon() async {
+  // Verifica si pokemon es nulo
+  if (pokemon != null) {
+    // Realiza la solicitud a la API
+    final response = await pokemon?.get(
+      'https://pokeapi.co/api/v2/pokemon/${pokemon1}',
+    );
+
+    // Si la respuesta es exitosa, devuelve el Pokémon
+    if (response?.statusCode == 200) {
+      return pokemon;
+    } else {
+      // Si la respuesta no es exitosa, devuelve nulo
+      return null;
+    }
+  } else {
+    // Si pokemon es nulo, devuelve nulo
+    return null;
+  }
+}
   @override
   Widget build(BuildContext context) {
      return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-         title: Text(widget.title),
-      ),
+      
       body: Center(
       child: Column(
-               mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _changePokemon,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), 
